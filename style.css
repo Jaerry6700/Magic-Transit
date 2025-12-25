@@ -1,6 +1,10 @@
 body {
   margin: 0;
-  background: #111;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   font-family: Arial, sans-serif;
   color: white;
   height: 100vh;
