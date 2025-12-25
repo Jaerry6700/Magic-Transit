@@ -10,11 +10,7 @@
       font-family: -apple-system, BlinkMacSystemFont;
       padding: 40px;
     }
-
-    h1 {
-      margin-bottom: 10px;
-    }
-
+    h1 { margin-bottom: 10px; }
     .box {
       margin-top: 30px;
       padding: 20px;
@@ -22,20 +18,13 @@
       border-radius: 10px;
       background: #1b1b1b;
     }
-
-    label {
-      display: block;
-      margin-top: 20px;
-      font-size: 15px;
-    }
-
+    label { display: block; margin-top: 15px; }
     .row {
       display: flex;
       gap: 10px;
+      margin-top: 6px;
       align-items: center;
-      margin-top: 8px;
     }
-
     input {
       width: 80px;
       padding: 8px;
@@ -43,7 +32,6 @@
       border: none;
       text-align: center;
     }
-
     button {
       margin-top: 30px;
       padding: 12px 24px;
@@ -54,12 +42,6 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
-    .note {
-      color: #aaa;
-      font-size: 13px;
-      margin-top: 8px;
-    }
   </style>
 </head>
 
@@ -67,58 +49,47 @@
 
 <h1>🎩 마술사 설정</h1>
 
-<!-- 관객 검색 정보 -->
 <div class="box">
   <h3>관객이 검색한 도시</h3>
   <p id="result">불러오는 중...</p>
 </div>
 
-<!-- 출발지 설정 -->
 <div class="box">
   <h3>✈️ 출발지 설정</h3>
-  <p class="note">관객이 뒤로가기 했을 때 → 이 번호로 이동</p>
-
   <div class="row">
     <span>사진</span>
-    <input type="number" id="startFrom" min="1" placeholder="예: 3">
+    <input id="startFrom" type="number" placeholder="예: 3">
     <span>→</span>
-    <input type="number" id="startTo" min="1" placeholder="예: 25">
+    <input id="startTo" type="number" placeholder="예: 12">
   </div>
 </div>
 
-<!-- 도착지 설정 -->
 <div class="box">
   <h3>🛬 도착지 설정</h3>
-  <p class="note">두 번째 선택에서 이동할 사진</p>
-
   <div class="row">
     <span>사진</span>
-    <input type="number" id="endFrom" min="1" placeholder="예: 9">
+    <input id="endFrom" type="number" placeholder="예: 14">
     <span>→</span>
-    <input type="number" id="endTo" min="1" placeholder="예: 12">
+    <input id="endTo" type="number" placeholder="예: 22">
   </div>
 </div>
 
 <button onclick="saveSettings()">설정 저장</button>
 
 <script>
-  // 검색한 도시 표시
   document.getElementById("result").innerText =
     localStorage.getItem("selectedCity") || "아직 없음";
 
-  // 불러오기
   document.getElementById("startFrom").value = localStorage.getItem("startFrom") || "";
-  document.getElementById("startTo").value   = localStorage.getItem("startTo")   || "";
-  document.getElementById("endFrom").value   = localStorage.getItem("endFrom")   || "";
-  document.getElementById("endTo").value     = localStorage.getItem("endTo")     || "";
+  document.getElementById("startTo").value   = localStorage.getItem("startTo") || "";
+  document.getElementById("endFrom").value   = localStorage.getItem("endFrom") || "";
+  document.getElementById("endTo").value     = localStorage.getItem("endTo") || "";
 
-  // 저장
   function saveSettings() {
     localStorage.setItem("startFrom", document.getElementById("startFrom").value);
-    localStorage.setItem("startTo",   document.getElementById("startTo").value);
-    localStorage.setItem("endFrom",   document.getElementById("endFrom").value);
-    localStorage.setItem("endTo",     document.getElementById("endTo").value);
-
+    localStorage.setItem("startTo", document.getElementById("startTo").value);
+    localStorage.setItem("endFrom", document.getElementById("endFrom").value);
+    localStorage.setItem("endTo", document.getElementById("endTo").value);
     alert("설정이 저장되었습니다!");
   }
 </script>
