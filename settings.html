@@ -10,7 +10,9 @@
       font-family: -apple-system, BlinkMacSystemFont;
       padding: 40px;
     }
+
     h1 { margin-bottom: 10px; }
+
     .box {
       margin-top: 30px;
       padding: 20px;
@@ -18,29 +20,41 @@
       border-radius: 10px;
       background: #1b1b1b;
     }
-    label { display: block; margin-top: 15px; }
+
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+
     .row {
       display: flex;
       gap: 10px;
-      margin-top: 6px;
       align-items: center;
+      margin-top: 8px;
     }
-    input {
-      width: 80px;
+
+    input[type="number"], input[type="file"] {
       padding: 8px;
       border-radius: 6px;
       border: none;
-      text-align: center;
+      width: 120px;
     }
+
     button {
-      margin-top: 30px;
+      margin-top: 20px;
       padding: 12px 24px;
-      font-size: 16px;
+      font-size: 15px;
       background: #1a73e8;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 6px;
     }
   </style>
 </head>
@@ -49,13 +63,18 @@
 
 <h1>🎩 마술사 설정</h1>
 
+<!-- 관객 검색 정보 -->
 <div class="box">
   <h3>관객이 검색한 도시</h3>
   <p id="result">불러오는 중...</p>
+  <button onclick="resetSearch()">검색 기록 초기화</button>
 </div>
 
+<!-- 출발지 설정 -->
 <div class="box">
   <h3>✈️ 출발지 설정</h3>
+  <p class="note">이 사진에서 뒤로가기 → 다른 사진으로 이동</p>
+
   <div class="row">
     <span>사진</span>
     <input id="startFrom" type="number" placeholder="예: 3">
@@ -64,8 +83,11 @@
   </div>
 </div>
 
+<!-- 도착지 설정 -->
 <div class="box">
   <h3>🛬 도착지 설정</h3>
+  <p class="note">두 번째 선택 시 이동될 사진</p>
+
   <div class="row">
     <span>사진</span>
     <input id="endFrom" type="number" placeholder="예: 14">
@@ -74,24 +96,48 @@
   </div>
 </div>
 
+<!-- 사진 업로드 -->
+<div class="box">
+  <h3>🖼 사진 업로드</h3>
+  <p class="note">여기에 올린 사진들이 갤러리에 사용됩니다</p>
+  <input type="file" id="photoUpload" accept="image/*" multiple>
+</div>
+
 <button onclick="saveSettings()">설정 저장</button>
 
 <script>
+  // 검색 결과 표시
   document.getElementById("result").innerText =
     localStorage.getItem("selectedCity") || "아직 없음";
 
-  document.getElementById("startFrom").value = localStorage.getItem("startFrom") || "";
-  document.getElementById("startTo").value   = localStorage.getItem("startTo") || "";
-  document.getElementById("endFrom").value   = localStorage.getItem("endFrom") || "";
-  document.getElementById("endTo").value     = localStorage.getItem("endTo") || "";
+  // 값 불러오기
+  ["startFrom","startTo","endFrom","endTo"].forEach(id=>{
+    document.getElementById(id).value = localStorage.getItem(id) || "";
+  });
 
+  // 저장
   function saveSettings() {
-    localStorage.setItem("startFrom", document.getElementById("startFrom").value);
-    localStorage.setItem("startTo", document.getElementById("startTo").value);
-    localStorage.setItem("endFrom", document.getElementById("endFrom").value);
-    localStorage.setItem("endTo", document.getElementById("endTo").value);
+    localStorage.setItem("startFrom", startFrom.value);
+    localStorage.setItem("startTo", startTo.value);
+    localStorage.setItem("endFrom", endFrom.value);
+    localStorage.setItem("endTo", endTo.value);
     alert("설정이 저장되었습니다!");
   }
+
+  // 검색 기록 초기화
+  function resetSearch() {
+    localStorage.removeItem("selectedCity");
+    alert("검색 기록이 초기화되었습니다");
+    location.reload();
+  }
+
+  // 이미지 업로드 (로컬 저장)
+  document.getElementById("photoUpload").addEventListener("change", (e) => {
+    const files = Array.from(e.target.files);
+    const saved = files.map(f => URL.createObjectURL(f));
+    localStorage.setItem("galleryImages", JSON.stringify(saved));
+    alert("사진이 업로드되었습니다!");
+  });
 </script>
 
 </body>
