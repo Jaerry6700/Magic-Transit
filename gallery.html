@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Gallery</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="gallery">
+  <img id="photo" src="images/1.jpg">
+</div>
+
+<script>
+const images = [
+  "images/1.jpg",
+  "images/2.jpg",
+  "images/3.jpg",
+  "images/4.jpg",
+  "images/5.jpg"
+];
+
+let index = 0;
+const DESTINY = 3; // ← 여기 숫자 바꾸면 고정될 사진 바뀜
+const img = document.getElementById("photo");
+
+img.src = images[index];
+
+let startX = 0;
+
+img.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+img.addEventListener("touchend", e => {
+  const endX = e.changedTouches[0].clientX;
+  if (Math.abs(startX - endX) > 50) {
+    if (startX > endX && index < images.length - 1) index++;
+    if (startX < endX && index > 0) index--;
+    img.src = images[index];
+  }
+});
+
+// 뒤로가기 눌렀을 때 → 운명 사진으로 이동
+history.pushState({}, "");
+window.onpopstate = () => {
+  index = DESTINY;
+  img.src = images[DESTINY];
+};
+</script>
+
+</body>
+</html>
