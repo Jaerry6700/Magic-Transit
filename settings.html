@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Magic Settings</title>
+  <title>마술사 설정</title>
   <style>
     body {
       background: #111;
@@ -10,13 +10,17 @@
       font-family: -apple-system, BlinkMacSystemFont;
       padding: 40px;
     }
+
     h1 {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
+
     label {
       display: block;
-      margin-top: 20px;
+      margin-top: 25px;
+      font-size: 16px;
     }
+
     select {
       width: 300px;
       padding: 10px;
@@ -24,6 +28,7 @@
       border-radius: 6px;
       border: none;
     }
+
     button {
       margin-top: 30px;
       padding: 12px 24px;
@@ -32,28 +37,82 @@
       color: white;
       border: none;
       border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .box {
+      margin-top: 40px;
+      padding: 20px;
+      border: 1px solid #333;
+      border-radius: 10px;
+      background: #1b1b1b;
+    }
+
+    .highlight {
+      font-size: 24px;
+      margin-top: 10px;
+      color: #00e0ff;
     }
   </style>
 </head>
+
 <body>
 
-<h1>마술 설정</h1>
+  <h1>🎩 마술사 설정 화면</h1>
 
-<label>관객이 선택한 도시 위치</label>
-<select>
-  <option>첫 번째</option>
-  <option>두 번째</option>
-  <option>세 번째</option>
-</select>
+  <!-- 관객이 검색한 도시 확인 -->
+  <div class="box">
+    <h3>관객이 검색한 도시</h3>
+    <p id="result">불러오는 중...</p>
+    <button onclick="clearData()">검색 기록 초기화</button>
+  </div>
 
-<label>항공사 선택</label>
-<select>
-  <option>Korean Air</option>
-  <option>Asiana</option>
-  <option>Jin Air</option>
-</select>
+  <!-- 마술 설정 -->
+  <div class="box">
+    <h3>마술 연출 설정</h3>
 
-<button onclick="alert('저장되었습니다!')">저장</button>
+    <label>관객이 선택한 도시가 나올 위치</label>
+    <select id="positionSelect">
+      <option value="1">첫 번째</option>
+      <option value="2">두 번째</option>
+      <option value="3">세 번째</option>
+    </select>
+
+    <label>항공사 선택</label>
+    <select id="airlineSelect">
+      <option value="Korean Air">Korean Air</option>
+      <option value="Asiana">Asiana</option>
+      <option value="Jin Air">Jin Air</option>
+    </select>
+
+    <button onclick="saveSettings()">설정 저장</button>
+  </div>
+
+  <script>
+    // 관객이 검색한 도시 표시
+    const city = localStorage.getItem("selectedCity");
+    document.getElementById("result").innerText =
+      city ? city : "아직 검색된 도시가 없습니다";
+
+    // 설정 저장
+    function saveSettings() {
+      const position = document.getElementById("positionSelect").value;
+      const airline = document.getElementById("airlineSelect").value;
+
+      localStorage.setItem("magic_position", position);
+      localStorage.setItem("magic_airline", airline);
+
+      alert("설정이 저장되었습니다!");
+    }
+
+    // 기록 초기화
+    function clearData() {
+      localStorage.removeItem("selectedCity");
+      alert("관객 검색 기록이 초기화되었습니다.");
+      location.reload();
+    }
+  </script>
 
 </body>
 </html>
+
