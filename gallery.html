@@ -12,7 +12,6 @@
       gap: 6px;
       padding: 6px;
     }
-
     img {
       width: 100%;
       border-radius: 6px;
@@ -23,20 +22,40 @@
 <body>
 
 <script>
-  const TOTAL_PHOTOS = 30;
+  const TOTAL = 30;
 
-  const startFrom = Number(localStorage.getItem("start_from"));
-  const startTo   = Number(localStorage.getItem("start_to"));
-  const endFrom   = Number(localStorage.getItem("end_from"));
-  const endTo     = Number(localStorage.getItem("end_to"));
+  const startFrom = Number(localStorage.getItem("startFrom"));
+  const startTo   = Number(localStorage.getItem("startTo"));
+  const endFrom   = Number(localStorage.getItem("endFrom"));
+  const endTo     = Number(localStorage.getItem("endTo"));
 
-  const pendingJump = localStorage.getItem("pendingJump");
+  const pending = localStorage.getItem("pendingJump");
 
-  for (let i = 1; i <= TOTAL_PHOTOS; i++) {
+  // 이미지 생성
+  for (let i = 1; i <= TOTAL; i++) {
     const img = document.createElement("img");
     img.src = `img/${i}.jpg`;
-    img.onclick = () => openPhoto(i);
+    img.onclick = () => handleClick(i);
     document.body.appendChild(img);
+  }
+
+  function handleClick(index) {
+    // 출발 트릭
+    if (index === startFrom) {
+      localStorage.setItem("pendingJump", startTo);
+      history.back();
+      return;
+    }
+
+    // 도착 트릭
+    if (index === endFrom) {
+      localStorage.setItem("pendingJump", endTo);
+      history.back();
+      return;
+    }
+
+    // 일반 사진
+    openPhoto(index);
   }
 
   function openPhoto(num) {
@@ -44,12 +63,12 @@
     window.location.href = "viewer.html";
   }
 
-  // 특정 조건일 때 화면 터치하면 강제 이동
-  if (pendingJump) {
-    document.body.addEventListener("click", () => {
+  // 앨범 복귀 후 자동 이동
+  if (pending) {
+    setTimeout(() => {
       localStorage.removeItem("pendingJump");
-      openPhoto(Number(pendingJump));
-    }, { once: true });
+      openPhoto(Number(pending));
+    }, 200);
   }
 </script>
 
