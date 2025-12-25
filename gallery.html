@@ -3,50 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <title>Gallery</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 6px;
+    }
+
+    img {
+      width: 100%;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
-<div id="gallery">
-  <img id="photo" src="images/1.jpg">
-</div>
-
 <script>
-const images = [
-  "images/1.jpg",
-  "images/2.jpg",
-  "images/3.jpg",
-  "images/4.jpg",
-  "images/5.jpg"
-];
+  const TOTAL_PHOTOS = 30;
 
-let index = 0;
-const DESTINY = 3; // ← 여기 숫자 바꾸면 고정될 사진 바뀜
-const img = document.getElementById("photo");
+  const startFrom = Number(localStorage.getItem("start_from"));
+  const startTo   = Number(localStorage.getItem("start_to"));
+  const endFrom   = Number(localStorage.getItem("end_from"));
+  const endTo     = Number(localStorage.getItem("end_to"));
 
-img.src = images[index];
+  const pendingJump = localStorage.getItem("pendingJump");
 
-let startX = 0;
-
-img.addEventListener("touchstart", e => {
-  startX = e.touches[0].clientX;
-});
-
-img.addEventListener("touchend", e => {
-  const endX = e.changedTouches[0].clientX;
-  if (Math.abs(startX - endX) > 50) {
-    if (startX > endX && index < images.length - 1) index++;
-    if (startX < endX && index > 0) index--;
-    img.src = images[index];
+  for (let i = 1; i <= TOTAL_PHOTOS; i++) {
+    const img = document.createElement("img");
+    img.src = `img/${i}.jpg`;
+    img.onclick = () => openPhoto(i);
+    document.body.appendChild(img);
   }
-});
 
-// 뒤로가기 눌렀을 때 → 운명 사진으로 이동
-history.pushState({}, "");
-window.onpopstate = () => {
-  index = DESTINY;
-  img.src = images[DESTINY];
-};
+  function openPhoto(num) {
+    localStorage.setItem("currentPhoto", num);
+    window.location.href = "viewer.html";
+  }
+
+  // 특정 조건일 때 화면 터치하면 강제 이동
+  if (pendingJump) {
+    document.body.addEventListener("click", () => {
+      localStorage.removeItem("pendingJump");
+      openPhoto(Number(pendingJump));
+    }, { once: true });
+  }
 </script>
 
 </body>
