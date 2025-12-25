@@ -1,24 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Boarding Pass</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Google</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: white;
+    }
+    img {
+      width: 270px;
+      margin-bottom: 30px;
+    }
+    input {
+      width: 480px;
+      padding: 14px;
+      font-size: 18px;
+      border-radius: 24px;
+      border: 1px solid #ddd;
+      outline: none;
+    }
+  </style>
 </head>
 <body>
 
-<div class="ticket">
-  <img id="airlineLogo" src="assets/airlines/koreanair.png" class="logo">
+  <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png">
 
-  <h1 id="route">ICN → CDG</h1>
+  <input
+    id="searchBox"
+    type="text"
+    placeholder="Search Google or type a URL"
+    onkeydown="search(event)"
+  >
 
-  <div class="qr-section">
-    <img id="ticketQR">
-    <img id="mapQR">
-  </div>
-</div>
+<script>
+function search(e) {
+  if (e.key === "Enter") {
+    const keyword = e.target.value.trim();
+    if (!keyword) return;
 
-<script src="data.js"></script>
-<script src="script.js"></script>
+    // 관객이 입력한 도시 저장
+    localStorage.setItem("selectedCity", keyword);
+
+    // 실제 구글 검색 열기
+    window.location.href =
+      "https://www.google.com/search?q=" + encodeURIComponent(keyword);
+  }
+}
+</script>
+
 </body>
 </html>
