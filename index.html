@@ -7,42 +7,43 @@
 </head>
 <body>
 
-  <!-- 상단 바 -->
-  <div class="top-bar">
-    <div class="top-right">
-      <span class="apps">⋮⋮⋮</span>
-      <div class="profile" onclick="openSettings()">S</div>
-    </div>
+  <!-- 상단 프로필 아이콘 -->
+  <div class="top-right">
+    <a href="settings.html" title="설정">
+      <div class="profile">S</div>
+    </a>
   </div>
 
   <!-- 메인 로고 -->
   <div class="center">
-    <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" class="logo">
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+         alt="Google"
+         class="logo">
 
-    <input
-      id="searchInput"
-      type="text"
-      placeholder="Google 검색 또는 URL 입력"
-      onkeydown="search(event)"
-    >
+    <!-- 검색창 -->
+    <form id="searchForm">
+     .builder.        <input
+        type="text"
+        id="searchInput"
+        placeholder="Google 검색 또는 URL 입력"
+        autocomplete="off"
+      >
+    </form>
   </div>
 
-<script>
-function search(e) {
-  if (e.key === "Enter") {
-    const keyword = e.target.value.trim();
-    if (!keyword) return;
+  <script>
+    document.getElementById("searchForm").addEventListener("submit", function(e) {
+      e.preventDefault();
 
-    localStorage.setItem("selectedCity", keyword);
-    window.location.href =
-      "https://www.google.com/search?q=" + encodeURIComponent(keyword);
-  }
-}
+      const keyword = document.getElementById("searchInput").value;
 
-function openSettings() {
-  window.location.href = "settings.html";
-}
-</script>
+      // 관객이 입력한 단어 저장
+      localStorage.setItem("selectedCity", keyword);
+
+      // 실제 구글 검색으로 이동 (자연스럽게)
+      window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(keyword);
+    });
+  </script>
 
 </body>
 </html>
