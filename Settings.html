@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Magic Settings</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont;
+      background: #111;
+      color: white;
+      padding: 40px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    input, select {
+      margin-top: 6px;
+      padding: 10px;
+      width: 300px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px 20px;
+      font-size: 16px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎩 마술 설정</h1>
+
+<label>관객이 검색한 도시가 나올 위치</label>
+<select id="resultIndex">
+  <option value="0">첫 번째</option>
+  <option value="1">두 번째</option>
+  <option value="2">세 번째</option>
+</select>
+
+<label>기본 항공사</label>
+<select id="airline">
+  <option value="Korean Air">Korean Air</option>
+  <option value="Asiana">Asiana</option>
+  <option value="Jin Air">Jin Air</option>
+</select>
+
+<button onclick="saveSettings()">저장</button>
+
+<script>
+function saveSettings() {
+  localStorage.setItem("resultIndex", document.getElementById("resultIndex").value);
+  localStorage.setItem("airline", document.getElementById("airline").value);
+  alert("설정 저장 완료!");
+}
+</script>
+
+</body>
+</html>
