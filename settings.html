@@ -15,18 +15,33 @@
       margin-bottom: 10px;
     }
 
-    label {
-      display: block;
-      margin-top: 25px;
-      font-size: 16px;
+    .box {
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid #333;
+      border-radius: 10px;
+      background: #1b1b1b;
     }
 
-    input, select {
-      width: 300px;
-      padding: 10px;
+    label {
+      display: block;
+      margin-top: 20px;
+      font-size: 15px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
       margin-top: 8px;
+    }
+
+    input {
+      width: 80px;
+      padding: 8px;
       border-radius: 6px;
       border: none;
+      text-align: center;
     }
 
     button {
@@ -40,18 +55,10 @@
       cursor: pointer;
     }
 
-    .box {
-      margin-top: 40px;
-      padding: 20px;
-      border: 1px solid #333;
-      border-radius: 10px;
-      background: #1b1b1b;
-    }
-
-    .highlight {
-      font-size: 22px;
-      margin-top: 10px;
-      color: #00e0ff;
+    .note {
+      color: #aaa;
+      font-size: 13px;
+      margin-top: 8px;
     }
   </style>
 </head>
@@ -64,59 +71,55 @@
 <div class="box">
   <h3>관객이 검색한 도시</h3>
   <p id="result">불러오는 중...</p>
-  <button onclick="clearData()">검색 기록 초기화</button>
 </div>
 
-<!-- 마술 연출 설정 -->
+<!-- 출발지 설정 -->
 <div class="box">
-  <h3>마술 연출 설정</h3>
+  <h3>✈️ 출발지 설정</h3>
+  <p class="note">관객이 뒤로가기 했을 때 → 이 번호로 이동</p>
 
-  <label>관객이 선택한 도시가 등장할 위치 (슬라이드 번호)</label>
-  <input type="number" id="destIndex" placeholder="예: 3">
-
-  <label>출발지로 사용할 사진 번호</label>
-  <input type="number" id="startIndex" placeholder="예: 1">
-
-  <label>항공사 선택</label>
-  <select id="airlineSelect">
-    <option value="Korean Air">Korean Air</option>
-    <option value="Asiana">Asiana</option>
-    <option value="Jin Air">Jin Air</option>
-  </select>
-
-  <button onclick="saveSettings()">설정 저장</button>
+  <div class="row">
+    <span>사진</span>
+    <input type="number" id="startFrom" min="1" placeholder="예: 3">
+    <span>→</span>
+    <input type="number" id="startTo" min="1" placeholder="예: 25">
+  </div>
 </div>
+
+<!-- 도착지 설정 -->
+<div class="box">
+  <h3>🛬 도착지 설정</h3>
+  <p class="note">두 번째 선택에서 이동할 사진</p>
+
+  <div class="row">
+    <span>사진</span>
+    <input type="number" id="endFrom" min="1" placeholder="예: 9">
+    <span>→</span>
+    <input type="number" id="endTo" min="1" placeholder="예: 12">
+  </div>
+</div>
+
+<button onclick="saveSettings()">설정 저장</button>
 
 <script>
-  // 검색된 도시 표시
-  const city = localStorage.getItem("selectedCity");
+  // 검색한 도시 표시
   document.getElementById("result").innerText =
-    city ? city : "아직 검색된 도시가 없습니다";
+    localStorage.getItem("selectedCity") || "아직 없음";
 
-  // 기존 설정 불러오기
-  document.getElementById("destIndex").value =
-    localStorage.getItem("destIndex") || "";
-
-  document.getElementById("startIndex").value =
-    localStorage.getItem("startIndex") || "";
-
-  document.getElementById("airlineSelect").value =
-    localStorage.getItem("airline") || "Korean Air";
+  // 불러오기
+  document.getElementById("startFrom").value = localStorage.getItem("startFrom") || "";
+  document.getElementById("startTo").value   = localStorage.getItem("startTo")   || "";
+  document.getElementById("endFrom").value   = localStorage.getItem("endFrom")   || "";
+  document.getElementById("endTo").value     = localStorage.getItem("endTo")     || "";
 
   // 저장
   function saveSettings() {
-    localStorage.setItem("destIndex", document.getElementById("destIndex").value);
-    localStorage.setItem("startIndex", document.getElementById("startIndex").value);
-    localStorage.setItem("airline", document.getElementById("airlineSelect").value);
+    localStorage.setItem("startFrom", document.getElementById("startFrom").value);
+    localStorage.setItem("startTo",   document.getElementById("startTo").value);
+    localStorage.setItem("endFrom",   document.getElementById("endFrom").value);
+    localStorage.setItem("endTo",     document.getElementById("endTo").value);
 
     alert("설정이 저장되었습니다!");
-  }
-
-  // 검색 기록 초기화
-  function clearData() {
-    localStorage.removeItem("selectedCity");
-    alert("관객 검색 기록이 초기화되었습니다.");
-    location.reload();
   }
 </script>
 
