@@ -1,75 +1,47 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>Gallery</title>
-  <style>
-    body {
-      margin: 0;
-      background: #000;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      padding: 6px;
-    }
-    img {
-      width: 100%;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery</title>
+
+<style>
+  body {
+    margin: 0;
+    background: #000;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 6px;
+  }
+
+  img {
+    width: 100%;
+    border-radius: 8px;
+  }
+</style>
 </head>
+
 <body>
 
 <script>
-  const TOTAL = 30;
-
+  const images = JSON.parse(localStorage.getItem("galleryImages") || "[]");
   const startFrom = Number(localStorage.getItem("startFrom"));
   const startTo   = Number(localStorage.getItem("startTo"));
   const endFrom   = Number(localStorage.getItem("endFrom"));
   const endTo     = Number(localStorage.getItem("endTo"));
 
-  const pending = localStorage.getItem("pendingJump");
-
-  // 이미지 생성
-  for (let i = 1; i <= TOTAL; i++) {
+  images.forEach((src, index) => {
     const img = document.createElement("img");
-    img.src = `img/${i}.jpg`;
-    img.onclick = () => handleClick(i);
+    img.src = src;
+
+    img.onclick = () => {
+      localStorage.setItem("currentIndex", index + 1);
+      window.location.href = "viewer.html";
+    };
+
     document.body.appendChild(img);
-  }
-
-  function handleClick(index) {
-    // 출발 트릭
-    if (index === startFrom) {
-      localStorage.setItem("pendingJump", startTo);
-      history.back();
-      return;
-    }
-
-    // 도착 트릭
-    if (index === endFrom) {
-      localStorage.setItem("pendingJump", endTo);
-      history.back();
-      return;
-    }
-
-    // 일반 사진
-    openPhoto(index);
-  }
-
-  function openPhoto(num) {
-    localStorage.setItem("currentPhoto", num);
-    window.location.href = "viewer.html";
-  }
-
-  // 앨범 복귀 후 자동 이동
-  if (pending) {
-    setTimeout(() => {
-      localStorage.removeItem("pendingJump");
-      openPhoto(Number(pending));
-    }, 200);
-  }
+  });
 </script>
 
 </body>
