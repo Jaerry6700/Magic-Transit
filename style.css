@@ -1,0 +1,21 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #111;
+  color: white;
+  text-align: center;
+}
+
+.ticket {
+  margin-top: 60px;
+}
+
+.logo {
+  width: 180px;
+  margin-bottom: 20px;
+}
+
+.qr-section img {
+  width: 160px;
+  margin: 10px;
+  border-radius: 12px;
+}
