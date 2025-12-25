@@ -8,25 +8,25 @@
 
 <body>
 
-  <!-- 우측 상단 프로필 -->
-  <div class="top-right">
-    <a href="settings.html" title="마술사 설정">
-      <div class="profile">S</div>
-    </a>
+  <!-- 상단 바 -->
+  <div class="top-bar">
+    <div class="top-left">
+      <span class="menu-item" onclick="goAlbum()">이미지</span>
+    </div>
+
+    <div class="top-right">
+      <a href="settings.html" class="profile">S</a>
+    </div>
   </div>
 
   <!-- 중앙 영역 -->
   <div class="center">
-
-    <!-- 구글 로고 (누르면 검색 기록 초기화) -->
     <img
       src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
       class="logo"
       onclick="resetSearch()"
-      style="cursor:pointer;"
     >
 
-    <!-- 검색창 -->
     <form id="searchForm">
       <input
         type="text"
@@ -35,14 +35,6 @@
         autocomplete="off"
       >
     </form>
-
-    <!-- 이미지 클릭 → 사진 앨범 -->
-    <img
-      src="album.png"
-      class="album"
-      onclick="goAlbum()"
-      title="사진 보기"
-    >
   </div>
 
   <script>
@@ -50,9 +42,9 @@
     document.getElementById("searchForm").addEventListener("submit", function(e) {
       e.preventDefault();
       const keyword = document.getElementById("searchInput").value;
-
       localStorage.setItem("selectedCity", keyword);
-      window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(keyword);
+      window.location.href =
+        "https://www.google.com/search?q=" + encodeURIComponent(keyword);
     });
 
     // 검색 기록 초기화
@@ -61,9 +53,9 @@
       alert("검색 기록이 초기화되었습니다");
     }
 
-    // 사진 앨범 이동
+    // 앨범으로 이동
     function goAlbum() {
-      window.location.href = "album.html";
+      window.location.href = "gallery.html";
     }
   </script>
 
