@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Boarding Pass</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont;
+      text-align: center;
+      padding-top: 60px;
+    }
+
+    .ticket {
+      background: #1c1c1c;
+      padding: 30px;
+      border-radius: 20px;
+      width: 320px;
+      margin: auto;
+    }
+
+    .route {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    img {
+      width: 180px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="ticket">
+  <h2>BOARDING PASS</h2>
+  <div class="route" id="routeText">ICN → ???</div>
+
+  <img id="qr" />
+</div>
+
+<script>
+  const city = localStorage.getItem("selectedCity") || "Paris";
+
+  const airportMap = {
+    "Paris": "CDG",
+    "London": "LHR",
+    "New York": "JFK",
+    "Tokyo": "HND",
+    "Seoul": "ICN"
+  };
+
+  const airport = airportMap[city] || "XXX";
+
+  document.getElementById("routeText").innerText =
+    `ICN → ${airport}`;
+
+  document.getElementById("qr").src =
+    "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
+    encodeURIComponent(`FLIGHT TO ${city}`);
+</script>
+
+</body>
+</html>
