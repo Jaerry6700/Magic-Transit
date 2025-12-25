@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Viewer</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+
+    img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+    }
+
+    .close {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 22px;
+      line-height: 36px;
+      text-align: center;
+      z-index: 10;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="close" onclick="goBack()">×</div>
+<img id="photo">
+
+<script>
+  let current = Number(localStorage.getItem("currentPhoto"));
+  const img = document.getElementById("photo");
+
+  const startFrom = Number(localStorage.getItem("start_from"));
+  const startTo   = Number(localStorage.getItem("start_to"));
+  const endFrom   = Number(localStorage.getItem("end_from"));
+  const endTo     = Number(localStorage.getItem("end_to"));
+
+  function show(num) {
+    current = num;
+    img.src = `img/${num}.jpg`;
+  }
+
+  show(current);
+
+  // 스와이프
+  let startX = 0;
+  document.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+  });
+
+  document.addEventListener("touchend", e => {
+    const diff = e.changedTouches[0].clientX - startX;
+    if (Math.abs(diff) < 50) return;
+
+    if (diff < 0) show(current + 1);
+    else show(current - 1);
+  });
+
+  // X 버튼 클릭
+  function goBack() {
+    if (current === startFrom) {
+      localStorage.setItem("pendingJump", startTo);
+    }
+
+    if (current === endFrom) {
+      localStorage.setItem("pendingJump", endTo);
+    }
+
+    window.location.href = "gallery.html";
+  }
+</script>
+
+</body>
+</html>
