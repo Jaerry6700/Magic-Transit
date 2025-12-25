@@ -1,63 +1,105 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>Google</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google</title>
+
+<style>
+  body {
+    margin: 0;
+    background: white;
+    font-family: -apple-system, BlinkMacSystemFont;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .top {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px;
+  }
+
+  .profile {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #1a73e8;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  .center {
+    text-align: center;
+    margin-top: 80px;
+  }
+
+  .logo {
+    width: 200px;
+    margin-bottom: 25px;
+  }
+
+  .search-box {
+    width: 85%;
+    max-width: 420px;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 24px;
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .bottom {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding-bottom: 25px;
+    color: #5f6368;
+    font-size: 14px;
+  }
+</style>
 </head>
 
 <body>
 
-  <!-- 상단 바 -->
-  <div class="top-bar">
-    <div class="top-left">
-      <span class="menu-item" onclick="goAlbum()">이미지</span>
-    </div>
+<!-- 상단 -->
+<div class="top">
+  <div class="profile" onclick="location.href='settings.html'">S</div>
+</div>
 
-    <div class="top-right">
-      <a href="settings.html" class="profile">S</a>
-    </div>
-  </div>
+<!-- 중앙 -->
+<div class="center">
+  <img class="logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
 
-  <!-- 중앙 영역 -->
-  <div class="center">
-    <img
-      src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
-      class="logo"
-      onclick="resetSearch()"
-    >
+  <form id="searchForm">
+    <input class="search-box" id="searchInput" placeholder="Google 검색 또는 URL 입력">
+  </form>
+</div>
 
-    <form id="searchForm">
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Google 검색 또는 URL 입력"
-        autocomplete="off"
-      >
-    </form>
-  </div>
+<!-- 하단 -->
+<div class="bottom">
+  <div onclick="goGallery()">이미지</div>
+  <div>뉴스</div>
+  <div>지도</div>
+</div>
 
-  <script>
-    // 검색 저장 + 실제 구글 이동
-    document.getElementById("searchForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const keyword = document.getElementById("searchInput").value;
-      localStorage.setItem("selectedCity", keyword);
-      window.location.href =
-        "https://www.google.com/search?q=" + encodeURIComponent(keyword);
-    });
+<script>
+  document.getElementById("searchForm").onsubmit = e => {
+    e.preventDefault();
+    const v = document.getElementById("searchInput").value;
+    localStorage.setItem("selectedCity", v);
+    window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(v);
+  };
 
-    // 검색 기록 초기화
-    function resetSearch() {
-      localStorage.removeItem("selectedCity");
-      alert("검색 기록이 초기화되었습니다");
-    }
-
-    // 앨범으로 이동
-    function goAlbum() {
-      window.location.href = "gallery.html";
-    }
-  </script>
+  function goGallery() {
+    location.href = "gallery.html";
+  }
+</script>
 
 </body>
 </html>
