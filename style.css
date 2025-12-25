@@ -1,21 +1,47 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
   background: #111;
+  font-family: Arial, sans-serif;
   color: white;
-  text-align: center;
+  height: 100vh;
 }
 
-.ticket {
-  margin-top: 60px;
+.top-right {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.profile {
+  width: 36px;
+  height: 36px;
+  background: #1a73e8;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 150px;
 }
 
 .logo {
-  width: 180px;
-  margin-bottom: 20px;
+  width: 272px;
+  margin-bottom: 30px;
 }
 
-.qr-section img {
-  width: 160px;
-  margin: 10px;
-  border-radius: 12px;
+input {
+  width: 520px;
+  padding: 14px;
+  border-radius: 24px;
+  border: none;
+  font-size: 16px;
+  outline: none;
 }
