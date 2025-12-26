@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Viewer</title>
 
 <style>
@@ -13,105 +13,157 @@
     touch-action: pan-y;
   }
 
-  img {
+  .viewer {
     width: 100vw;
     height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+    transition: transform 0.25s ease;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    transition: transform 0.3s ease;
+    user-select: none;
+    pointer-events: none;
   }
 
   .close {
     position: fixed;
-    top: 16px;
-    right: 16px;
-    font-size: 26px;
+    top: 18px;
+    right: 18px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
     color: white;
-    z-index: 10;
+    font-size: 20px;
+    line-height: 34px;
+    text-align: center;
+    z-index: 100;
   }
 </style>
 </head>
 
 <body>
 
-<div class="close" onclick="goBack()">✕</div>
-<img id="photo">
+<div class="viewer">
+  <div class="slide" id="slide">
+    <img id="photo">
+  </div>
+  <div class="close" onclick="handleClose()">✕</div>
+</div>
 
 <script>
-  const images = JSON.parse(localStorage.getItem("galleryImages")) || [];
-  let index = Number(localStorage.getItem("currentIndex")) || 1;
+/* ------------------ 데이터 ------------------ */
+const images = JSON.parse(localStorage.getItem("galleryImages")) || [];
+let index = Number(localStorage.getItem("currentIndex")) || 1;
 
-  const startFrom = Number(localStorage.getItem("startFrom"));
-  const startTo   = Number(localStorage.getItem("startTo"));
-  const endFrom   = Number(localStorage.getItem("endFrom"));
-  const endTo     = Number(localStorage.getItem("endTo"));
+const startFrom = Number(localStorage.getItem("startFrom"));
+const startTo   = Number(localStorage.getItem("startTo"));
+const endFrom   = Number(localStorage.getItem("endFrom"));
+const endTo     = Number(localStorage.getItem("endTo"));
 
-  const img = document.getElementById("photo");
+const slide = document.getElementById("slide");
+const img = document.getElementById("photo");
 
-  function showImage(i) {
-    if (i < 1 || i > images.length) return;
-    index = i;
-    img.src = images[i - 1];
+/* ------------------ 표시 ------------------ */
+function showImage(i) {
+  if (!images[i - 1]) return;
+  index = i;
+  img.src = images[i - 1];
+  localStorage.setItem("currentIndex", index);
+}
+showImage(index);
+
+/* ------------------ 스와이프 로직 ------------------ */
+let startX = 0;
+let currentX = 0;
+let dragging = false;
+
+slide.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+  dragging = true;
+  slide.style.transition = "none";
+});
+
+slide.addEventListener("touchmove", e => {
+  if (!dragging) return;
+  currentX = e.touches[0].clientX;
+  const delta = currentX - startX;
+  slide.style.transform = `translateX(${delta}px)`;
+});
+
+slide.addEventListener("touchend", () => {
+  dragging = false;
+  const diff = currentX - startX;
+
+  slide.style.transition = "transform 0.25s ease";
+
+  // 오른쪽 → 이전
+  if (diff > 80) {
+    goPrev();
+  }
+  // 왼쪽 → 다음
+  else if (diff < -80) {
+    goNext();
+  }
+  else {
+    slide.style.transform = "translateX(0)";
+  }
+});
+
+/* ------------------ 이동 ------------------ */
+function goNext() {
+  if (index < images.length) {
+    slide.style.transform = "translateX(-100%)";
+    setTimeout(() => {
+      showImage(index + 1);
+      slide.style.transform = "translateX(0)";
+    }, 200);
+  } else {
+    slide.style.transform = "translateX(0)";
+  }
+}
+
+function goPrev() {
+  if (index > 1) {
+    slide.style.transform = "translateX(100%)";
+    setTimeout(() => {
+      showImage(index - 1);
+      slide.style.transform = "translateX(0)";
+    }, 200);
+  } else {
+    slide.style.transform = "translateX(0)";
+  }
+}
+
+/* ------------------ X 버튼 (마술 핵심) ------------------ */
+function handleClose() {
+  if (index === startFrom) {
+    localStorage.setItem("currentIndex", startTo);
+    location.reload();
+    return;
   }
 
-  showImage(index);
-
-  // ===== 스와이프 처리 =====
-  let startX = 0;
-  let endX = 0;
-
-  document.addEventListener("touchstart", e => {
-    startX = e.touches[0].clientX;
-  });
-
-  document.addEventListener("touchend", e => {
-    endX = e.changedTouches[0].clientX;
-    handleSwipe();
-  });
-
-  function handleSwipe() {
-    const diff = startX - endX;
-
-    // 오른쪽 → 왼쪽 (다음)
-    if (diff > 50) {
-      next();
-    }
-
-    // 왼쪽 → 오른쪽 (이전)
-    if (diff < -50) {
-      prev();
-    }
+  if (index === endFrom) {
+    localStorage.setItem("currentIndex", endTo);
+    location.reload();
+    return;
   }
 
-  function next() {
-    if (index < images.length) {
-      index++;
-      showImage(index);
-    }
-  }
-
-  function prev() {
-    if (index > 1) {
-      index--;
-      showImage(index);
-    }
-  }
-
-  // 🔥 마술 로직 (뒤로가기 트릭)
-  function goBack() {
-    if (index === startFrom) {
-      localStorage.setItem("currentIndex", startTo);
-      location.reload();
-      return;
-    }
-
-    if (index === endFrom) {
-      localStorage.setItem("currentIndex", endTo);
-      location.reload();
-      return;
-    }
-
-    history.back();
-  }
+  window.location.href = "index.html";
+}
 </script>
 
 </body>
