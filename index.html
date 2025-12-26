@@ -8,96 +8,160 @@
 <style>
   body {
     margin: 0;
-    background: white;
-    font-family: -apple-system, BlinkMacSystemFont;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fff;
     height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    overflow: hidden;
   }
 
-  .top {
+  /* 상단 상태바 공간 */
+  .top-safe {
+    height: 44px;
+  }
+
+  /* 상단 메뉴 */
+  .top-bar {
     display: flex;
-    justify-content: flex-end;
-    padding: 15px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 14px;
+  }
+
+  .top-left {
+    font-size: 15px;
+    color: #1a73e8;
+  }
+
+  .top-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
 
   .profile {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
+    width: 32px;
+    height: 32px;
     background: #1a73e8;
     color: white;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    cursor: pointer;
   }
 
+  /* 메인 영역 */
   .center {
-    text-align: center;
-    margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 60px;
   }
 
   .logo {
-    width: 200px;
-    margin-bottom: 25px;
+    width: 160px;
+    margin-bottom: 20px;
   }
 
   .search-box {
-    width: 85%;
-    max-width: 420px;
-    margin: 0 auto;
+    width: 90%;
+    max-width: 360px;
     border: 1px solid #ddd;
-    border-radius: 24px;
-    padding: 14px;
+    border-radius: 999px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .search-box input {
+    border: none;
+    outline: none;
+    flex: 1;
     font-size: 16px;
   }
 
-  .bottom {
+  .icon {
+    width: 20px;
+    opacity: 0.6;
+  }
+
+  /* 하단 영역 */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 0 20px;
+    background: #fff;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .bottom-links {
     display: flex;
     justify-content: center;
-    gap: 30px;
-    padding-bottom: 25px;
-    color: #5f6368;
-    font-size: 14px;
+    gap: 18px;
+    margin-top: 8px;
+  }
+
+  .bottom-links span {
+    cursor: pointer;
   }
 </style>
 </head>
 
 <body>
 
-<!-- 상단 -->
-<div class="top">
-  <div class="profile" onclick="location.href='settings.html'">S</div>
+<!-- 상단 여백 -->
+<div class="top-safe"></div>
+
+<!-- 상단 메뉴 -->
+<div class="top-bar">
+  <div class="top-left">전체</div>
+
+  <div class="top-right">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_Apps_Icon.png" width="20">
+    <div class="profile" onclick="goSettings()">S</div>
+  </div>
 </div>
 
 <!-- 중앙 -->
 <div class="center">
   <img class="logo" src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png">
 
-  <form id="searchForm">
-    <input class="search-box" id="searchInput" placeholder="Google 검색 또는 URL 입력">
-  </form>
+  <div class="search-box">
+    <img class="icon" src="https://cdn-icons-png.flaticon.com/512/622/622669.png">
+    <input id="searchInput" placeholder="Google 검색 또는 URL 입력">
+    <img class="icon" src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png">
+    <img class="icon" src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png">
+  </div>
 </div>
 
 <!-- 하단 -->
-<div class="bottom">
-  <div onclick="goGallery()">이미지</div>
-  <div>뉴스</div>
-  <div>지도</div>
+<div class="bottom-bar">
+  대한민국
+  <div class="bottom-links">
+    <span>광고</span>
+    <span>비즈니스</span>
+    <span>개인정보처리방침</span>
+    <span>설정</span>
+  </div>
 </div>
 
 <script>
-  document.getElementById("searchForm").onsubmit = e => {
-    e.preventDefault();
-    const v = document.getElementById("searchInput").value;
-    localStorage.setItem("selectedCity", v);
-    window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(v);
-  };
+  // 검색 실행
+  document.querySelector(".search-box input").addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      localStorage.setItem("selectedCity", e.target.value);
+      window.location.href = "https://www.google.com/search?q=" + encodeURIComponent(e.target.value);
+    }
+  });
 
-  function goGallery() {
-    location.href = "gallery.html";
+  // 프로필 → 설정
+  function goSettings() {
+    window.location.href = "settings.html";
   }
 </script>
 
