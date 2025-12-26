@@ -1,144 +1,193 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>마술사 설정</title>
+<meta charset="UTF-8">
+<title>마술사 설정</title>
 
-  <!-- Google Picker -->
-  <script src="https://apis.google.com/js/api.js"></script>
-  <script src="https://accounts.google.com/gsi/client"></script>
+<!-- Google Picker -->
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
 
-  <style>
-    body {
-      background: #111;
-      color: white;
-      font-family: -apple-system, BlinkMacSystemFont;
-      padding: 40px;
-    }
+<style>
+  body {
+    background: #111;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont;
+    padding: 40px;
+  }
 
-    h1 { margin-bottom: 10px; }
+  h1, h2 {
+    margin-bottom: 10px;
+  }
 
-    .box {
-      margin-top: 30px;
-      padding: 20px;
-      border: 1px solid #333;
-      border-radius: 10px;
-      background: #1b1b1b;
-    }
+  .box {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 10px;
+    background: #1b1b1b;
+  }
 
-    input {
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      width: 120px;
-    }
+  .rule-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
 
-    button {
-      margin-top: 20px;
-      padding: 12px 24px;
-      font-size: 15px;
-      background: #1a73e8;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+  .rule-row input {
+    padding: 6px;
+    border-radius: 6px;
+    border: none;
+    text-align: center;
+  }
 
-    .row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-top: 10px;
-    }
-  </style>
+  .airline { width: 120px; }
+  .small { width: 70px; }
+
+  .arrow { color: #aaa; }
+
+  button {
+    margin-top: 20px;
+    padding: 12px 24px;
+    font-size: 15px;
+    background: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .link {
+    margin-top: 20px;
+    display: inline-block;
+    color: #aaa;
+    cursor: pointer;
+  }
+</style>
 </head>
 
 <body>
 
 <h1>🎩 출/도착지 설정</h1>
 
+<!-- 검색 결과 -->
 <div class="box">
-  <h3>✈️ 마술 규칙</h3>
-
-  <div class="row">
-    <input id="airline" placeholder="항공사">
-    <input id="start" type="number" placeholder="시작">
-    →
-    <input id="from" type="number" placeholder="출발지">
-    →
-    <input id="to" type="number" placeholder="도착지">
-  </div>
-
-  <button onclick="saveRule()">저장</button>
+  <h2>🔍 관객이 검색한 도시</h2>
+  <p id="city">불러오는 중...</p>
+  <button onclick="resetSearch()">검색 기록 초기화</button>
 </div>
 
+<!-- 규칙 설정 -->
 <div class="box">
-  <h3>🖼 Google Drive 사진 불러오기</h3>
-  <button onclick="initGoogle()">📁 구글 드라이브에서 선택</button>
+  <h2>✈️ 마술 시나리오</h2>
+  <div id="rules"></div>
+  <button onclick="saveRules()">저장</button>
 </div>
+
+<!-- 사진 업로드 -->
+<div class="box">
+  <h2>🖼 사진 불러오기</h2>
+  <button onclick="openGooglePicker()">📁 구글 드라이브에서 선택</button>
+</div>
+
+<div class="link" onclick="location.href='index.html'">← 메인으로</div>
+<div class="link" onclick="location.href='gallery.html'">📸 갤러리로</div>
 
 <script>
-/* ================================
-   🔐 여기에만 값 입력
-================================ */
+/* ==============================
+   🔐 여기에 네 키만 넣어
+============================== */
 const CLIENT_ID = "971878482556-7jh1slb1lcc75i85an9boveo44o7uasr.apps.googleusercontent.com";
-const DEVELOPER_KEY = "AIzaSyDZDtjNENld8rWzKa_VDr0UJ_pu7B59mNU";
+const API_KEY   = "AIzaSyDZDtjNENld8rWzKa_VDr0UJ_pu7B59mNU";
 
-/* ================================
-   Google Picker 설정
-================================ */
+/* ==============================
+   구글 드라이브 Picker
+============================== */
 const SCOPES = "https://www.googleapis.com/auth/drive.readonly";
 let tokenClient;
 let accessToken = null;
 
-function initGoogle() {
+function openGooglePicker() {
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: (tokenResponse) => {
-      accessToken = tokenResponse.access_token;
-      openPicker();
+    callback: (token) => {
+      accessToken = token.access_token;
+      createPicker();
     }
   });
   tokenClient.requestAccessToken();
 }
 
-function openPicker() {
-  const view = new google.picker.View(google.picker.ViewId.DOCS_IMAGES);
-
+function createPicker() {
   const picker = new google.picker.PickerBuilder()
-    .setDeveloperKey(DEVELOPER_KEY)
+    .addView(google.picker.ViewId.DOCS_IMAGES)
     .setOAuthToken(accessToken)
-    .addView(view)
+    .setDeveloperKey(API_KEY)
     .setCallback(pickerCallback)
     .build();
-
   picker.setVisible(true);
 }
 
 function pickerCallback(data) {
   if (data.action === google.picker.Action.PICKED) {
     const file = data.docs[0];
-    let images = JSON.parse(localStorage.getItem("galleryImages") || "[]");
-    images.push(file.url);
-    localStorage.setItem("galleryImages", JSON.stringify(images));
+    const list = JSON.parse(localStorage.getItem("galleryImages") || "[]");
+    list.push(file.url);
+    localStorage.setItem("galleryImages", JSON.stringify(list));
     alert("사진이 갤러리에 추가되었습니다!");
   }
 }
 
-/* ================================
-   설정 저장
-================================ */
-function saveRule() {
-  const data = {
-    airline: airline.value,
-    start: Number(start.value),
-    from: Number(from.value),
-    to: Number(to.value)
-  };
+/* ==============================
+   출/도착 규칙 저장
+============================== */
+const rulesBox = document.getElementById("rules");
+const saved = JSON.parse(localStorage.getItem("magicRules") || "[]");
 
-  localStorage.setItem("magicRule", JSON.stringify(data));
-  alert("설정이 저장되었습니다!");
+for (let i = 0; i < 5; i++) {
+  const r = saved[i] || {};
+  const row = document.createElement("div");
+  row.className = "rule-row";
+  row.innerHTML = `
+    <input class="airline" placeholder="항공사" value="${r.airline || ""}">
+    <input class="small" type="number" placeholder="시작" value="${r.start || ""}">
+    <span class="arrow">→</span>
+    <input class="small" type="number" placeholder="출발" value="${r.from || ""}">
+    <span class="arrow">→</span>
+    <input class="small" type="number" placeholder="도착" value="${r.to || ""}">
+  `;
+  rulesBox.appendChild(row);
+}
+
+function saveRules() {
+  const rows = document.querySelectorAll(".rule-row");
+  const data = [];
+
+  rows.forEach(r => {
+    const i = r.querySelectorAll("input");
+    if (i[0].value) {
+      data.push({
+        airline: i[0].value,
+        start: Number(i[1].value),
+        from: Number(i[2].value),
+        to: Number(i[3].value)
+      });
+    }
+  });
+
+  localStorage.setItem("magicRules", JSON.stringify(data));
+  alert("저장 완료!");
+}
+
+/* 검색 기록 */
+document.getElementById("city").innerText =
+  localStorage.getItem("selectedCity") || "없음";
+
+function resetSearch() {
+  localStorage.removeItem("selectedCity");
+  alert("검색 기록 초기화 완료");
 }
 </script>
 
