@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Google</title>
 
-<!-- Google Material Symbols -->
+<!-- Google Material Icons -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400" rel="stylesheet" />
 
 <style>
@@ -23,7 +23,7 @@
     color: #5f6368;
   }
 
-  /* 상단 safe area */
+  /* 상단 safe */
   .top-safe {
     height: 44px;
   }
@@ -37,7 +37,17 @@
   }
 
   .top-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
     font-size: 15px;
+  }
+
+  .top-left span {
+    cursor: pointer;
+  }
+
+  .top-left .active {
     color: #1a73e8;
     font-weight: 500;
   }
@@ -51,9 +61,9 @@
   .profile {
     width: 32px;
     height: 32px;
+    background: #d6d6d6;
+    color: #333;
     border-radius: 50%;
-    background: #1a73e8;
-    color: white;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -120,8 +130,14 @@
 
 <!-- 상단 -->
 <div class="top-bar">
-  <div class="top-left">전체</div>
+  <div class="top-left">
+    <span class="material-symbols-outlined">science</span>
+    <span class="active">전체</span>
+    <span onclick="location.href='gallery.html'">이미지</span>
+  </div>
+
   <div class="top-right">
+    <span class="material-symbols-outlined">notifications</span>
     <span class="material-symbols-outlined">apps</span>
     <div class="profile">S</div>
   </div>
