@@ -1,47 +1,146 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gallery</title>
+  <meta charset="UTF-8">
+  <title>Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-  body {
-    margin: 0;
-    background: #000;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    padding: 6px;
-  }
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+    }
 
-  img {
-    width: 100%;
-    border-radius: 8px;
-  }
-</style>
+    .viewer {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 50%;
+      color: white;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+  </style>
 </head>
 
 <body>
 
+<div class="viewer">
+  <div class="close" onclick="handleClose()">✕</div>
+  <img id="photo">
+</div>
+
 <script>
-  const images = JSON.parse(localStorage.getItem("galleryImages") || "[]");
-  const startFrom = Number(localStorage.getItem("startFrom"));
-  const startTo   = Number(localStorage.getItem("startTo"));
-  const endFrom   = Number(localStorage.getItem("endFrom"));
-  const endTo     = Number(localStorage.getItem("endTo"));
+/* -----------------------
+   기본 데이터 불러오기
+------------------------ */
+const images = JSON.parse(localStorage.getItem("galleryImages") || "[]");
+const rules  = JSON.parse(localStorage.getItem("magicRules") || "[]");
 
-  images.forEach((src, index) => {
-    const img = document.createElement("img");
-    img.src = src;
+let currentIndex = Number(localStorage.getItem("currentPhoto")) || 0;
+let stage = Number(localStorage.getItem("magicStage")) || 0;
+/*
+  stage 0: 일반 진입
+  stage 1: 출발지 이동 대기
+  stage 2: 도착지 이동
+*/
 
-    img.onclick = () => {
-      localStorage.setItem("currentIndex", index + 1);
-      window.location.href = "viewer.html";
-    };
+const img = document.getElementById("photo");
 
-    document.body.appendChild(img);
-  });
+/* -----------------------
+   이미지 표시
+------------------------ */
+function showImage(index) {
+  if (!images[index]) return;
+  currentIndex = index;
+  img.src = images[index];
+  localStorage.setItem("currentPhoto", index);
+}
+showImage(currentIndex);
+
+/* -----------------------
+   스와이프 처리
+------------------------ */
+let startX = 0;
+
+document.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+});
+
+document.addEventListener("touchend", e => {
+  const diff = e.changedTouches[0].clientX - startX;
+  if (Math.abs(diff) < 50) return;
+
+  if (diff > 0) goPrev();
+  else goNext();
+});
+
+function goNext() {
+  if (currentIndex < images.length - 1) {
+    showImage(currentIndex + 1);
+  }
+}
+
+function goPrev() {
+  if (currentIndex > 0) {
+    showImage(currentIndex - 1);
+  }
+}
+
+/* -----------------------
+   X 버튼 로직 (핵심)
+------------------------ */
+function handleClose() {
+  const rule = rules[0]; // 첫 번째 규칙 사용
+
+  if (!rule) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  // 1단계: 트리거 → 출발지
+  if (stage === 0) {
+    currentIndex = rule.start - 1;
+    stage = 1;
+  }
+  // 2단계: 출발 → 도착
+  else if (stage === 1) {
+    currentIndex = rule.to - 1;
+    stage = 2;
+  }
+  // 3단계: 종료
+  else {
+    window.location.href = "index.html";
+    return;
+  }
+
+  localStorage.setItem("magicStage", stage);
+  showImage(currentIndex);
+}
 </script>
 
 </body>
